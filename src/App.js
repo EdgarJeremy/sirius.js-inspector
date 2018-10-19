@@ -10,27 +10,19 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import DashboardIcon from '@material-ui/icons/Dashboard';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import PeopleIcon from '@material-ui/icons/People';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import LayersIcon from '@material-ui/icons/Layers';
 import FolderIcon from '@material-ui/icons/Folder';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
 import AssignmentIcon from '@material-ui/icons/Assignment';
-import StarBorder from '@material-ui/icons/StarBorder';
 import Collapse from '@material-ui/core/Collapse';
 import Chip from '@material-ui/core/Chip';
-import Input from '@material-ui/core/Input';
 import Composer from './components/Composer';
+import { baseURL } from './modules/config';
 
 const drawerWidth = 300;
 
@@ -141,7 +133,8 @@ class App extends React.Component {
 		models: [],
 		endpoint: '',
 		basepoint: '',
-		verb: ''
+		verb: '',
+		placeholders: {}
 	};
 
 	handleDrawerOpen = () => {
@@ -153,9 +146,7 @@ class App extends React.Component {
 	};
 
 	componentDidMount() {
-		// TODO : Use dynamic URL
-		let url = window.location.origin;
-		fetch(`http://localhost:8080/app_meta`).then((res) => res.json()).then((data) => {
+		fetch(`${baseURL}/app_meta`).then((res) => res.json()).then((data) => {
 			let { routes, models } = data;
 			this.setState({ routes, models });
 		});
@@ -224,11 +215,16 @@ class App extends React.Component {
 										<Collapse in={this.state.expandTarget === i} timeout="auto" unmountOnExit>
 											<List component="div" disablePadding>
 												{route.endpoints.map((endpoint, z) => (
-													<ListItem button className={classes.nested} key={z} onClick={() => {
+													<ListItem button selected={this.state.endpoint + this.state.verb === endpoint.endpoint + endpoint.verbs} className={classes.nested} key={z} onClick={() => {
+														let placeholders = {};
+														endpoint.keys.forEach((key) => {
+															placeholders[key] = `:${key}`;
+														})
 														this.setState({
 															endpoint: endpoint.endpoint,
 															basepoint: route.basepoint,
-															verb: endpoint.verbs
+															verb: endpoint.verbs,
+															placeholders
 														});
 													}}>
 														<Chip label={endpoint.verbs} style={{ fontSize: 10, padding: 0, height: 25, width: 50, borderRadius: 3 }} className={classes[`chip${endpoint.verbs.toLowerCase()}`]} />
@@ -259,7 +255,7 @@ class App extends React.Component {
 					<main className={classes.content}>
 						<div className={classes.appBarSpacer} />
 
-						<Composer basepoint={this.state.basepoint} endpoint={this.state.endpoint} verb={this.state.verb} />
+						{(this.state.basepoint && this.state.endpoint && this.state.verb && this.state.placeholders) && <Composer basepoint={this.state.basepoint} endpoint={this.state.endpoint} verb={this.state.verb} placeholders={this.state.placeholders} />}
 
 					</main>
 				</div>
