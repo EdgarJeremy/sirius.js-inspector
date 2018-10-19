@@ -18,7 +18,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import FolderIcon from '@material-ui/icons/Folder';
 import FolderOpenIcon from '@material-ui/icons/FolderOpen';
-import AssignmentIcon from '@material-ui/icons/Assignment';
+import AppsIcon from '@material-ui/icons/Apps';
 import Collapse from '@material-ui/core/Collapse';
 import Chip from '@material-ui/core/Chip';
 import Composer from './components/Composer';
@@ -245,7 +245,7 @@ class App extends React.Component {
 							{(this.state.models.map((model, i) => (
 								<ListItem key={i} button>
 									<ListItemIcon>
-										<AssignmentIcon />
+										<AppsIcon />
 									</ListItemIcon>
 									<ListItemText primary={model.name} />
 								</ListItem>

@@ -6,23 +6,31 @@ const R = function (config = {}) {
     method = _.lowerCase(method);
     let options = {
         headers: {
-            'x-access-token': localStorage.getItem('accessToken'),
-            'x-refresh-token': localStorage.getItem('refreshToken'),
-            'x-socket-id': localStorage.getItem('socketid')
+            'x-access-token': localStorage.getItem('devAccessToken'),
+            'x-refresh-token': localStorage.getItem('devRefreshToken'),
+            'x-socket-id': localStorage.getItem('devSocketid')
         }
     }
     if (method === 'post' || method === 'put') {
         axios[method](url, body, options).then(successHandler).then(onSuccess).catch(onError);
     } else {
-        axios[method](url, { ...options }).then(onSuccess).catch(onError);
+        axios[method](url, { ...options }).then(successHandler).then(onSuccess).catch(onError);
     }
 }
 
 const successHandler = function (res) {
-    console.log(res);
     if (res.headers['x-access-token'] && res.headers['x-refresh-token']) {
-        localStorage.setItem('accessToken', res.headers['x-access-token']);
-        localStorage.setItem('refreshToken', res.headers['x-refresh-token']);
+        localStorage.setItem('devAccessToken', res.headers['x-access-token']);
+        localStorage.setItem('devRefreshToken', res.headers['x-refresh-token']);
+    }
+    const data = res.data;
+    if (data.data) {
+        if (data.data.token) {
+            localStorage.setItem('devAccessToken', data.data.token);
+        }
+        if (data.data.refreshToken) {
+            localStorage.setItem('devRefreshToken', data.data.refreshToken);
+        }
     }
     return res;
 }

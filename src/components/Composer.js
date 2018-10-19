@@ -15,7 +15,6 @@ import CodeIcon from '@material-ui/icons/Code';
 import LinkIcon from '@material-ui/icons/Link';
 import ReactJson from 'react-json-view';
 import SwipeableViews from 'react-swipeable-views';
-import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { baseURL } from '../modules/config';
@@ -39,6 +38,7 @@ class Composer extends React.Component {
         url: baseURL,
         storageKey: '',
         resTabIndex: 0,
+        reqTabIndex: 0,
         loading: false,
         response: {}
     }
@@ -59,13 +59,7 @@ class Composer extends React.Component {
         if (!config) {
             config = {
                 placeholders: placeholders,
-                params: verb === 'GET' ? {
-                    attributes: 'id',
-                    filter: '',
-                    order: '\\created_at',
-                    limit: 20,
-                    offset: 0
-                } : {},
+                params: {},
                 body: {}
             };
             localStorage.setItem(storageKey, JSON.stringify(config));
@@ -74,6 +68,8 @@ class Composer extends React.Component {
         this.setState({
             ...config,
             response: {},
+            reqTabIndex: 0,
+            resTabIndex: 0,
             storageKey
         });
     }
@@ -138,7 +134,7 @@ class Composer extends React.Component {
         const { params, body, placeholders, loading, response } = this.state;
         return (
             <div>
-                <Paper>
+                <Paper style={{ position: 'relative' }}>
                     {loading && <LinearProgress />}
                     <div className={classes.contain}>
                         <Typography variant="h5" component="h3">
@@ -159,48 +155,50 @@ class Composer extends React.Component {
                                 startAdornment: <InputAdornment position="start">{verb}</InputAdornment>,
                             }}
                         />
-                        {Object.keys(placeholders).length > 0 && (
-                            <div>
-                                <Typography style={{ fontSize: 15, color: '#bdc3c7', marginTop: 5, marginBottom: 5 }} variant="h6" component="p">
-                                    Placeholder
-                                </Typography>
-                                <ReactJson
-                                    name="placeholder"
-                                    theme="flat"
-                                    style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                    onEdit={this.onUpdatePlaceholder.bind(this)}
-                                    src={placeholders} />
-                            </div>
-                        )}
-                        <Typography style={{ fontSize: 15, color: '#bdc3c7', marginTop: 5, marginBottom: 5 }} variant="h6" component="p">
-                            Query Parameter
-                        </Typography>
-                        <ReactJson
-                            name="params"
-                            theme="flat"
-                            style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                            onAdd={this.onUpdateParams.bind(this)}
-                            onEdit={this.onUpdateParams.bind(this)}
-                            onDelete={this.onUpdateParams.bind(this)}
-                            src={params} />
-                        {(verb === 'POST' || verb === 'PUT') && (
-                            <div>
-                                <Typography style={{ fontSize: 15, color: '#bdc3c7', marginTop: 5, marginBottom: 5 }} variant="h6" component="p">
-                                    Request Body
-                                </Typography>
-                                <ReactJson
-                                    name="body"
-                                    theme="flat"
-                                    style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                    onAdd={this.onUpdateBody.bind(this)}
-                                    onEdit={this.onUpdateBody.bind(this)}
-                                    onDelete={this.onUpdateBody.bind(this)}
-                                    src={body} />
-                            </div>
-                        )}
-                        <Typography style={{ fontSize: 15, color: '#bdc3c7', marginTop: 5, marginBottom: 5 }} variant="h6" component="p">
-                            Hasil URL
-                        </Typography>
+                        <br /><br />
+                        <Paper>
+                            <Tabs
+                                value={this.state.reqTabIndex}
+                                onChange={(e, i) => this.setState({ reqTabIndex: i })}
+                                indicatorColor="secondary"
+                                textColor="secondary"
+                                fullWidth>
+                                <Tab label="Query Parameter" />
+                                <Tab label="Body" disabled={verb !== 'POST' && verb !== 'PUT'} />
+                                <Tab label="Placeholder" disabled={Object.keys(placeholders).length === 0} />
+                            </Tabs>
+                            <SwipeableViews
+                                axis="x"
+                                index={this.state.reqTabIndex}
+                                onChangeIndex={(i) => this.setState({ reqTabIndex: i })}>
+                                <div>
+                                    <ReactJson
+                                        name="params"
+                                        style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                        onAdd={this.onUpdateParams.bind(this)}
+                                        onEdit={this.onUpdateParams.bind(this)}
+                                        onDelete={this.onUpdateParams.bind(this)}
+                                        src={params} />
+                                </div>
+                                <div>
+                                    <ReactJson
+                                        name="body"
+                                        style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                        onAdd={this.onUpdateBody.bind(this)}
+                                        onEdit={this.onUpdateBody.bind(this)}
+                                        onDelete={this.onUpdateBody.bind(this)}
+                                        src={body} />
+                                </div>
+                                <div>
+                                    <ReactJson
+                                        name="placeholder"
+                                        style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                        onEdit={this.onUpdatePlaceholder.bind(this)}
+                                        src={placeholders} />
+                                </div>
+                            </SwipeableViews>
+                        </Paper>
+                        <br />
                         <Chip
                             icon={<LinkIcon />}
                             label={this.getUrl()}
@@ -222,7 +220,7 @@ class Composer extends React.Component {
                 <Paper>
                     <div className={classes.contain}>
                         <Typography variant="h5" component="h3">
-                            Response - {response.status} {response.statusText}
+                            Response<span style={{ float: 'right' }}>{response.status} - {response.statusText}</span>
                         </Typography><br />
                         <Divider /><br />
                         <div className={classes.root}>
