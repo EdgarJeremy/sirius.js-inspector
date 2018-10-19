@@ -133,129 +133,125 @@ class Composer extends React.Component {
         const { classes, basepoint, endpoint, verb } = this.props;
         const { params, body, placeholders, loading, response } = this.state;
         return (
-            <div>
-                <Paper style={{ position: 'relative' }}>
-                    {loading && <LinearProgress />}
-                    <div className={classes.contain}>
-                        <Typography variant="h5" component="h3">
-                            Request
+            <div style={{ display: 'flex', height: '100%', paddingTop: 64 }}>
+                <div style={{ padding: '24px 0', paddingRight: 24, width: '50%', height: '100%', flex: '1 0 auto', }}>
+                    <Paper style={{ position: 'relative' }}>
+                        {loading && <LinearProgress />}
+                        <div className={classes.contain}>
+                            <Typography variant="h5" component="h3">
+                                Request
                         </Typography><br />
-                        <Divider /><br />
-                        <Typography style={{ fontSize: 15, color: '#bdc3c7', marginBottom: 5 }} variant="h6" component="p">
-                            Route
+                            <Divider /><br />
+                            <Typography style={{ fontSize: 15, color: '#bdc3c7', marginBottom: 5 }} variant="h6" component="p">
+                                Route
                         </Typography>
-                        <TextField
-                            fullWidth
-                            id="outlined-simple-start-adornment"
-                            className={classNames(classes.margin, classes.textField)}
-                            variant="outlined"
-                            color="#3498db"
-                            value={basepoint + endpoint}
-                            InputProps={{
-                                startAdornment: <InputAdornment position="start">{verb}</InputAdornment>,
-                            }}
-                        />
-                        <br /><br />
-                        <Paper>
-                            <Tabs
-                                value={this.state.reqTabIndex}
-                                onChange={(e, i) => this.setState({ reqTabIndex: i })}
-                                indicatorColor="secondary"
-                                textColor="secondary"
-                                fullWidth>
-                                <Tab label="Query Parameter" />
-                                <Tab label="Body" disabled={verb !== 'POST' && verb !== 'PUT'} />
-                                <Tab label="Placeholder" disabled={Object.keys(placeholders).length === 0} />
-                            </Tabs>
-                            <SwipeableViews
-                                axis="x"
-                                index={this.state.reqTabIndex}
-                                onChangeIndex={(i) => this.setState({ reqTabIndex: i })}>
-                                <div>
-                                    <ReactJson
-                                        name="params"
-                                        style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                        onAdd={this.onUpdateParams.bind(this)}
-                                        onEdit={this.onUpdateParams.bind(this)}
-                                        onDelete={this.onUpdateParams.bind(this)}
-                                        src={params} />
-                                </div>
-                                <div>
-                                    <ReactJson
-                                        name="body"
-                                        style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                        onAdd={this.onUpdateBody.bind(this)}
-                                        onEdit={this.onUpdateBody.bind(this)}
-                                        onDelete={this.onUpdateBody.bind(this)}
-                                        src={body} />
-                                </div>
-                                <div>
-                                    <ReactJson
-                                        name="placeholder"
-                                        style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                        onEdit={this.onUpdatePlaceholder.bind(this)}
-                                        src={placeholders} />
-                                </div>
-                            </SwipeableViews>
-                        </Paper>
-                        <br />
-                        <Chip
-                            icon={<LinkIcon />}
-                            label={this.getUrl()}
-                            className={classes.fullUrl}
-                            color="primary"
-                            variant="outlined"
-                            clickable
-                        />
-                        <br /><br />
-                        <Button onClick={this.hit.bind(this)} variant="contained" size="large" style={{ backgroundColor: '#2980b9', color: '#ffffff' }} className={classes.button}>
-                            <CompareArrowsIcon /> &nbsp;Hit!
-                        </Button>&nbsp;
-                        <Button variant="contained" size="large" style={{ backgroundColor: '#2ecc71', color: '#ffffff' }} className={classes.button}>
-                            <CodeIcon /> &nbsp;Kode
-                        </Button>
-                    </div>
-                </Paper>
-                <br />
-                <Paper>
-                    <div className={classes.contain}>
-                        <Typography variant="h5" component="h3">
-                            Response<span style={{ float: 'right' }}>{response.status} - {response.statusText}</span>
-                        </Typography><br />
-                        <Divider /><br />
-                        <div className={classes.root}>
+                            <TextField
+                                fullWidth
+                                id="outlined-simple-start-adornment"
+                                className={classNames(classes.margin, classes.textField)}
+                                variant="outlined"
+                                color="#3498db"
+                                value={basepoint + endpoint}
+                                InputProps={{
+                                    startAdornment: <InputAdornment position="start">{verb}</InputAdornment>,
+                                }}
+                            />
+                            <br /><br />
                             <Paper>
                                 <Tabs
-                                    value={this.state.resTabIndex}
-                                    onChange={(e, i) => this.setState({ resTabIndex: i })}
-                                    indicatorColor="primary"
-                                    textColor="primary"
+                                    value={this.state.reqTabIndex}
+                                    onChange={(e, i) => this.setState({ reqTabIndex: i })}
+                                    indicatorColor="secondary"
+                                    textColor="secondary"
                                     fullWidth>
-                                    <Tab label="Body" />
-                                    <Tab label="Headers" />
+                                    <Tab label="Query Parameter" />
+                                    <Tab label="Body" disabled={verb !== 'POST' && verb !== 'PUT'} />
+                                    <Tab label="Placeholder" disabled={Object.keys(placeholders).length === 0} />
                                 </Tabs>
                                 <SwipeableViews
                                     axis="x"
-                                    index={this.state.resTabIndex}
-                                    onChangeIndex={(i) => this.setState({ resTabIndex: i })}>
+                                    index={this.state.reqTabIndex}
+                                    onChangeIndex={(i) => this.setState({ reqTabIndex: i })}>
+                                    <div>
+                                        <ReactJson
+                                            name="params"
+                                            style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                            onAdd={this.onUpdateParams.bind(this)}
+                                            onEdit={this.onUpdateParams.bind(this)}
+                                            onDelete={this.onUpdateParams.bind(this)}
+                                            src={params} />
+                                    </div>
                                     <div>
                                         <ReactJson
                                             name="body"
-                                            collapsed={1}
                                             style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                            src={response.data} />
+                                            onAdd={this.onUpdateBody.bind(this)}
+                                            onEdit={this.onUpdateBody.bind(this)}
+                                            onDelete={this.onUpdateBody.bind(this)}
+                                            src={body} />
                                     </div>
                                     <div>
                                         <ReactJson
-                                            name="headers"
+                                            name="placeholder"
                                             style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                            src={response.headers} />
+                                            onEdit={this.onUpdatePlaceholder.bind(this)}
+                                            src={placeholders} />
                                     </div>
                                 </SwipeableViews>
                             </Paper>
+                            <br />
+                            <pre style={{ overflowY: 'hidden', backgroundColor: '#ddd', padding: 5, borderRadius: 4, color: '#333' }}>{this.getUrl()}</pre>
+                            <br />
+                            <Button onClick={this.hit.bind(this)} variant="contained" size="large" style={{ backgroundColor: '#2980b9', color: '#ffffff' }} className={classes.button}>
+                                <CompareArrowsIcon /> &nbsp;Hit!
+                        </Button>&nbsp;
+                        <Button variant="contained" size="large" style={{ backgroundColor: '#2ecc71', color: '#ffffff' }} className={classes.button}>
+                                <CodeIcon /> &nbsp;Kode
+                        </Button>
                         </div>
-                    </div>
-                </Paper>
+                    </Paper>
+                </div>
+                <div style={{ width: '50%', height: '100%', padding: '24px 0', flex: '1 0 auto', }}>
+                    <Paper className={classes.contain} style={{ overflowX: 'hidden', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <Typography variant="h5" component="h3">
+                            Response<span style={{ float: 'right', color: (response.status >= 200 && response.status < 400) ? '#2ecc71' : ((response.status >= 400 && response.status < 500) ? '#e67e22' : '#e74c3c') }}>{response.status} - {response.statusText}</span>
+                        </Typography><br />
+                        <Divider /><br />
+                        <div style={{ flex: '1 0 auto' }}>
+                            <div style={{ maxHeight: '100%' }}>
+                                <Paper>
+                                    <Tabs
+                                        value={this.state.resTabIndex}
+                                        onChange={(e, i) => this.setState({ resTabIndex: i })}
+                                        indicatorColor="primary"
+                                        textColor="primary"
+                                        fullWidth>
+                                        <Tab label="Body" />
+                                        <Tab label="Headers" />
+                                    </Tabs>
+                                    <SwipeableViews
+                                        axis="x"
+                                        index={this.state.resTabIndex}
+                                        onChangeIndex={(i) => this.setState({ resTabIndex: i })}>
+                                        <div>
+                                            <ReactJson
+                                                name="body"
+                                                collapsed={1}
+                                                style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                                src={response.data} />
+                                        </div>
+                                        <div>
+                                            <ReactJson
+                                                name="headers"
+                                                style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                                src={response.headers} />
+                                        </div>
+                                    </SwipeableViews>
+                                </Paper>
+                            </div>
+                        </div>
+                    </Paper>
+                </div>
             </div>
         )
     }

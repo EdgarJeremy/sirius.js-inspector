@@ -86,13 +86,15 @@ const styles = theme => ({
 			width: theme.spacing.unit * 9,
 		},
 	},
-	appBarSpacer: theme.mixins.toolbar,
+	// appBarSpacer: theme.mixins.toolbar,
 	content: {
 		flexGrow: 1,
 		padding: theme.spacing.unit * 3,
+		paddingTop: 0,
+		paddingBottom: 0,
 		height: '100vh',
 		overflow: 'auto',
-		backgroundColor: '#ecf0f1'
+		backgroundColor: '#ecf0f1',
 	},
 	chartContainer: {
 		marginLeft: -22,

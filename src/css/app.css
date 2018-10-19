@@ -2,12 +2,13 @@
     width: 5px;
     right:5px;
     position:absolute;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
 }
 
 ::-webkit-scrollbar-thumb {
-    background:#FEF0FF;
+    background: #34495e;
     border-radius:10px;
 }
