@@ -136,7 +136,6 @@ class Composer extends React.Component {
             <div style={{ display: 'flex', height: '100%', paddingTop: 64 }}>
                 <div style={{ padding: '24px 0', paddingRight: 24, width: '50%', height: '100%', flex: '1 0 auto', }}>
                     <Paper style={{ position: 'relative' }}>
-                        {loading && <LinearProgress />}
                         <div className={classes.contain}>
                             <Typography variant="h5" component="h3">
                                 Request
@@ -164,9 +163,9 @@ class Composer extends React.Component {
                                     indicatorColor="secondary"
                                     textColor="secondary"
                                     fullWidth>
-                                    <Tab label="Query Parameter" />
-                                    <Tab label="Body" disabled={verb !== 'POST' && verb !== 'PUT'} />
-                                    <Tab label="Placeholder" disabled={Object.keys(placeholders).length === 0} />
+                                    <Tab label={`Query Parameter (${Object.keys(params).length})`} />
+                                    <Tab label={`Body (${Object.keys(body).length})`} disabled={verb !== 'POST' && verb !== 'PUT'} />
+                                    <Tab label={`Placeholder (${Object.keys(placeholders).length})`} disabled={Object.keys(placeholders).length === 0} />
                                 </Tabs>
                                 <SwipeableViews
                                     axis="x"
@@ -214,42 +213,51 @@ class Composer extends React.Component {
                 <div style={{ width: '50%', height: '100%', padding: '24px 0', flex: '1 0 auto', }}>
                     <Paper className={classes.contain} style={{ overflowX: 'hidden', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                         <Typography variant="h5" component="h3">
-                            Response<span style={{ float: 'right', color: (response.status >= 200 && response.status < 400) ? '#2ecc71' : ((response.status >= 400 && response.status < 500) ? '#e67e22' : '#e74c3c') }}>{response.status} - {response.statusText}</span>
+                            Response {Object.keys(response).length > 0 && <span style={{ fontWeight: 'bold', float: 'right', color: '#ffffff', fontSize: 14, padding: 5, borderRadius: 5, backgroundColor: (response.status >= 200 && response.status < 400) ? '#2ecc71' : ((response.status >= 400 && response.status < 500) ? '#e67e22' : '#e74c3c') }}>{response.status} - {response.statusText}</span>}
                         </Typography><br />
                         <Divider /><br />
-                        <div style={{ flex: '1 0 auto' }}>
-                            <div style={{ maxHeight: '100%' }}>
-                                <Paper>
-                                    <Tabs
-                                        value={this.state.resTabIndex}
-                                        onChange={(e, i) => this.setState({ resTabIndex: i })}
-                                        indicatorColor="primary"
-                                        textColor="primary"
-                                        fullWidth>
-                                        <Tab label="Body" />
-                                        <Tab label="Headers" />
-                                    </Tabs>
-                                    <SwipeableViews
-                                        axis="x"
-                                        index={this.state.resTabIndex}
-                                        onChangeIndex={(i) => this.setState({ resTabIndex: i })}>
-                                        <div>
-                                            <ReactJson
-                                                name="body"
-                                                collapsed={1}
-                                                style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                                src={response.data} />
-                                        </div>
-                                        <div>
-                                            <ReactJson
-                                                name="headers"
-                                                style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
-                                                src={response.headers} />
-                                        </div>
-                                    </SwipeableViews>
-                                </Paper>
-                            </div>
-                        </div>
+                        {loading && <LinearProgress />}
+                        {(Object.keys(response).length === 0 && !loading) && (
+                            <div>
+                                <Typography variant="h6" gutterBottom>
+                                    Belum ada hasil
+                            </Typography>
+                                <Typography variant="subtitle1" gutterBottom>
+                                    Hit endpoint untuk memulai request dan melihat hasil
+                            </Typography>
+                            </div>)
+                        }
+                        {(Object.keys(response).length > 0 && !loading) && (
+                            <Paper>
+                                <Tabs
+                                    value={this.state.resTabIndex}
+                                    onChange={(e, i) => this.setState({ resTabIndex: i })}
+                                    indicatorColor="primary"
+                                    textColor="primary"
+                                    fullWidth>
+                                    <Tab label={`Body (${Object.keys(response.data).length})`} />
+                                    <Tab label={`Headers (${Object.keys(response.headers).length})`} />
+                                </Tabs>
+                                <SwipeableViews
+                                    axis="x"
+                                    index={this.state.resTabIndex}
+                                    onChangeIndex={(i) => this.setState({ resTabIndex: i })}>
+                                    <div>
+                                        <ReactJson
+                                            name="body"
+                                            collapsed={1}
+                                            style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                            src={response.data} />
+                                    </div>
+                                    <div>
+                                        <ReactJson
+                                            name="headers"
+                                            style={{ padding: 10, borderRadius: 5, marginTop: 5, marginBottom: 5 }}
+                                            src={response.headers} />
+                                    </div>
+                                </SwipeableViews>
+                            </Paper>
+                        )}
                     </Paper>
                 </div>
             </div>
