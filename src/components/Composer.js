@@ -116,13 +116,19 @@ class Composer extends React.Component {
         const { body } = this.state;
         const { verb: method } = this.props;
         const url = this.getUrl();
+        console.log('hit');
         this.setState({ loading: true }, () => {
+            console.log('loading');
             R({
                 url, method, body,
                 onSuccess: (r) => {
                     this.setState({ loading: false, response: r });
                 },
                 onError: (e) => {
+                    if ('x-access-token' in e.response.headers && 'x-refresh-token' in e.response.headers) {
+                        localStorage.setItem('devAccessToken', e.response.headers['x-access-token']);
+                        localStorage.setItem('devRefreshToken', e.response.headers['x-refresh-token']);
+                    }
                     this.setState({ loading: false, response: e.response });
                 }
             });

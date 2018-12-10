@@ -19,17 +19,19 @@ const R = function (config = {}) {
 }
 
 const successHandler = function (res) {
-    if (res.headers['x-access-token'] && res.headers['x-refresh-token']) {
+    if ('x-access-token' in res.headers && 'x-refresh-token' in res.headers) {
         localStorage.setItem('devAccessToken', res.headers['x-access-token']);
         localStorage.setItem('devRefreshToken', res.headers['x-refresh-token']);
     }
     const data = res.data;
     if (data.data) {
-        if (data.data.token) {
-            localStorage.setItem('devAccessToken', data.data.token);
-        }
-        if (data.data.refreshToken) {
-            localStorage.setItem('devRefreshToken', data.data.refreshToken);
+        if(data.data.tokens) {
+            if (data.data.tokens.token) {
+                localStorage.setItem('devAccessToken', data.data.tokens.token);
+            }
+            if (data.data.tokens.refreshToken) {
+                localStorage.setItem('devRefreshToken', data.data.tokens.refreshToken);
+            }
         }
     }
     return res;
